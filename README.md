@@ -1,3 +1,7 @@
+Note: OpenAI API Key is currently set to NEXT_PUBLIC. This is EXTREMELY UNSAFE and a BAD IDEA. As this is intented to be run locally it shouldn't be an issue, but don't host this somewhere without changing that.
+
+---
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
