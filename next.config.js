@@ -1,11 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    experimental: {
-        appDir: true,
-    },
-    images: {
-        remotePatterns: [],
-    },
-}
+  experimental: {
+    appDir: true,
+  },
+  images: {
+    remotePatterns: [],
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

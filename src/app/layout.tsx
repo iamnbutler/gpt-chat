@@ -2,13 +2,9 @@ import * as Layout from "@/ui/layout";
 import "./globals.css";
 
 export default function RootLayout({
-    children,
+  children,
 }: {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-    return (
-        <Layout.Base>
-            {children}
-        </Layout.Base>
-    );
+  return <Layout.Base>{children}</Layout.Base>;
 }
