@@ -99,11 +99,12 @@ function Home() {
                 </div>
             </Layout.CenterColumn>
             <Layout.RightColumn>
-                <div className="flex flex-col w-[520px] space-y-2 p-2">
+                <div className="flex flex-col w-[520px] space-y-2">
                     <textarea
                         className={cn(
                             "flex flex-grow w-full rounded-xs border border-white/20 bg-transparent px-4 py-3 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50")}
                         placeholder="Send a message"
+                        rows={10}
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         autoFocus

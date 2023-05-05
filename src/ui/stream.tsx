@@ -7,10 +7,11 @@ interface StreamDisplayProps {
 }
 
 export const StreamDisplay = ({ lines, currentLine }: StreamDisplayProps) => (
-    <div className={cn('p-4', 'self-start', 'max-w-2xl prose dark:prose-invert prose-sm')}>
-        {lines.map((line, index) => (
-            <ReactMarkdown key={index}>{line}</ReactMarkdown>
-        ))}
-        <p className="transition">{currentLine}</p>
-    </div>
+    lines.length > 0 || currentLine !== "" ? (
+        <div className={cn('p-4', 'self-start', 'max-w-2xl prose dark:prose-invert prose-sm')}>
+            {lines.map((line, index) => (
+                <ReactMarkdown key={index}>{line}</ReactMarkdown>
+            ))}
+            <p className="transition">{currentLine}</p>
+        </div>) : <></>
 );
