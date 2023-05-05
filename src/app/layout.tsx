@@ -1,3 +1,4 @@
+import * as Layout from "@/ui/layout";
 import "./globals.css";
 
 export default function RootLayout({
@@ -6,12 +7,8 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html lang="en">
-            <body className="dark font-mono">
-                <main className="flex min-h-screen font-mono text-sm">
-                    {children}
-                </main>
-            </body>
-        </html>
+        <Layout.Base>
+            {children}
+        </Layout.Base>
     );
 }

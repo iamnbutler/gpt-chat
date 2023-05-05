@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
 
 interface StreamDisplayProps {
@@ -6,7 +7,7 @@ interface StreamDisplayProps {
 }
 
 export const StreamDisplay = ({ lines, currentLine }: StreamDisplayProps) => (
-    <div className="p-4 prose dark:prose-invert prose-sm max-w-none">
+    <div className={cn('p-4', 'self-start', 'max-w-2xl prose dark:prose-invert prose-sm')}>
         {lines.map((line, index) => (
             <ReactMarkdown key={index}>{line}</ReactMarkdown>
         ))}
