@@ -7,9 +7,9 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-            <body>
+            <body className="dark font-mono">
                 <main className="flex min-h-screen flex gap-16 justify-center p-24 font-mono text-sm">
-                    <section className="w-[540px]">
+                    <section className="w-[720px]">
                         <div
                             className={`flex flex-col prose prose-sm dark:prose-invert max-w-none prose-pre:leading-none prose-code:leading-none
                         `}

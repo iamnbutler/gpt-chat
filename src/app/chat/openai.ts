@@ -28,9 +28,11 @@ async function buildMessages(message: ChatCompletionRequestMessage) {
     return messages;
 }
 
+export type Model = 'gpt-3.5-turbo' | 'gpt-4';
+
 interface GetChatCompletionProps {
     messages: ChatCompletionRequestMessage[];
-    model?: 'gpt-3.5-turbo' | 'gpt-4';
+    model?: Model;
 }
 
 async function getChatCompletion({
@@ -39,7 +41,7 @@ async function getChatCompletion({
 }: GetChatCompletionProps): Promise<CreateChatCompletionResponse> {
     try {
         const configuration = new Configuration({
-            apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+            apiKey: process.env.OPENAI_API_KEY,
         });
 
         if (!configuration.apiKey) {
