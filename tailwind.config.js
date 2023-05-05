@@ -5,13 +5,6 @@ module.exports = {
     darkMode: ["class"],
     content: ["src/app/**/*.{ts,tsx}", "src/ui/**/*.{ts,tsx}"],
     theme: {
-        container: {
-            center: true,
-            padding: "2rem",
-            screens: {
-                "2xl": "1400px",
-            },
-        },
         extend: {
             colors: {
                 border: "hsl(var(--border))",
@@ -72,5 +65,6 @@ module.exports = {
             },
         },
     },
-    plugins: [require("tailwindcss-animate")],
+    plugins: [require("tailwindcss-animate"), require('@tailwindcss/typography'),
+    ],
 }
