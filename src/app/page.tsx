@@ -7,7 +7,7 @@ function Home() {
     const [input, setInput] = useState("");
     const [response, setResponse] = useState<String>("");
 
-    const prompt = `${input}`;
+    const prompt = `${input} Use markdown to format your reply.`;
 
     const generateResponse = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
@@ -36,45 +36,38 @@ function Home() {
 
         const reader = data.getReader();
         const decoder = new TextDecoder();
-        let done = false;
+        let buffer = '';
 
-        while (!done) {
-            const { value, done: doneReading } = await reader.read();
-            done = doneReading;
-            const chunkValue = decoder.decode(value);
-            setResponse((prev) => prev + chunkValue);
+        while (true) {
+            const { done, value } = await reader.read();
+
+            if (done) {
+                if (buffer.length > 0) {
+                    setResponse((prev) => prev + buffer);
+                }
+                break;
+            }
+
+            buffer += decoder.decode(value, { stream: true });
+
+            let newlineIndex;
+            while ((newlineIndex = buffer.indexOf('\n')) !== -1) {
+                const line = buffer.slice(0, newlineIndex);
+                setResponse((prev) => prev + line + '\n');
+                buffer = buffer.slice(newlineIndex + 1);
+            }
         }
         setLoading(false);
     };
 
     return (
-        <main className="space-y-4 text-primary">
-            <div className="px-4">
-                <p>How can I help you?</p>
-            </div>
-            <textarea
-                className={cn(
-                    "flex w-full rounded-xs border border-white/20 bg-transparent px-4 py-3 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50")}
-                placeholder="Send a message"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                autoFocus
-                rows={5}
-                wrap="off"
-            />
-            {!loading ? (
-                <button
-                    className={cn('border border-white/20 hover:bg-white/10', 'h-10 py-2 px-4 rounded-xs')}
-                    type="button"
-                    onClick={(e) => generateResponse(e)}
-                >
-                    Submit &rarr;
-                </button>
-            ) : (
-                <button
-                    disabled
-                    className={cn('border border-white/5 text-white/20', 'h-10 py-2 px-4 rounded-xs')}
-                >
+        <div className="flex w-full">
+            <div className="flex flex-col grow-0 space-y-4 text-primary w-[720px] py-16 mx-auto">
+                <div className="px-4">
+                    <p>How can I help you?</p>
+                </div>
+
+                {loading && (
                     <div role="status">
                         <svg aria-hidden="true" className="inline w-4 h-4 text-black/10 animate-spin dark:text-white/10 fill-white/50" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
@@ -82,14 +75,34 @@ function Home() {
                         </svg>
                         <span className="sr-only">Loading...</span>
                     </div>
+                )}
+
+                {response && (
+                    <div className="border-t border-b border-white/10 p-4 transition">
+                        {response}
+                    </div>
+                )}
+            </div>
+            <div className="flex flex-col w-[520px] space-y-2 p-2">
+                <textarea
+                    className={cn(
+                        "flex flex-grow w-full rounded-xs border border-white/20 bg-transparent px-4 py-3 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50")}
+                    placeholder="Send a message"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    autoFocus
+                    wrap="off"
+                />
+                <button
+                    disabled={loading}
+                    className={cn('border border-white/20', 'h-10 py-2 px-4 rounded-xs', loading && 'cursor-not-allowed', !loading && 'hover:bg-white/10')}
+                    type="button"
+                    onClick={(e) => generateResponse(e)}
+                >
+                    {!loading ? <span>Submit &rarr;</span> : <span className="text-white/50">Streaming...</span>}
                 </button>
-            )}
-            {response && (
-                <div className="border-t border-b border-white/10 p-4 transition">
-                    {response}
-                </div>
-            )}
-        </main>
+            </div>
+        </div>
     )
 }
 
