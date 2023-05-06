@@ -11,11 +11,10 @@ function Home() {
     const [loading, setLoading] = useState(false);
     const [input, setInput] = useState("");
     const [lines, setLines] = useState<string[]>([]);
+    const [streamedLines, setStreamedLines] = useState<string[]>([]);
     const [currentLine, setCurrentLine] = useState<string>("");
 
     const messages = useMessageStore((state) => state.messages);
-
-    const prompt = `${input} Use markdown to format your reply.`;
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
@@ -24,15 +23,19 @@ function Home() {
         }
     };
 
-    const generateResponse = async () => {
+    const generateResponse = async (debug_prompt?: string) => {
         setLines([]);
         setCurrentLine("");
         setLoading(true);
 
+        const message_input = debug_prompt ? debug_prompt : input;
+
         useMessageStore.getState().addMessage({
             role: "user",
-            messages: [input],
+            messages: [message_input],
         });
+
+        const prompt = `${message_input} Use markdown to format your reply.`;
 
         const response = await fetch("/chat/generate", {
             method: "POST",
@@ -57,6 +60,7 @@ function Home() {
         const reader = data.getReader();
         const decoder = new TextDecoder();
         let buffer = "";
+        let streamedLines = [];
 
         while (true) {
             const { done, value } = await reader.read();
@@ -64,12 +68,8 @@ function Home() {
             if (done) {
                 if (buffer.length > 0) {
                     setLines((prev) => [...prev, buffer]);
+                    streamedLines.push(buffer); // add the latest line to the streamedLines array
                 }
-                // Store the array of lines as an assistant message
-                useMessageStore.getState().addMessage({
-                    role: "assistant",
-                    messages: lines,
-                });
                 break;
             }
 
@@ -79,6 +79,7 @@ function Home() {
             while ((newlineIndex = buffer.indexOf("\n")) !== -1) {
                 const line = buffer.slice(0, newlineIndex);
                 setLines((prev) => [...prev, line]);
+                streamedLines.push(line); // add the latest line to the streamedLines array
                 buffer = buffer.slice(newlineIndex + 1);
             }
 
@@ -87,7 +88,48 @@ function Home() {
 
         setCurrentLine(""); // Clear the currentLine after parsing the last line
         setLoading(false);
+
+        useMessageStore.getState().addMessage({
+            role: "assistant",
+            messages: streamedLines,
+        });
     };
+
+    function DebugPrompts() {
+        return (
+            <div className="flex flex-col mt-12 space-y-2 items-start">
+                <h3>Debug Prompts</h3>
+                <button
+                    className="text-white/70 hover:text-white"
+                    type="button"
+                    onClick={() => generateResponse("Generate a markdown testing file")}
+                >
+                    Test Markdown
+                </button>
+                <button
+                    className="text-white/70 hover:text-white"
+                    type="button"
+                    onClick={() => generateResponse("Tell me a 5 paragraph story")}
+                >
+                    Tell me a 5 paragraph story
+                </button>
+                <button
+                    className="text-white/70 hover:text-white"
+                    type="button"
+                    onClick={() => generateResponse("What is the simulation theory?")}
+                >
+                    What is the simulation theory?
+                </button>
+                <button
+                    className="text-white/70 hover:text-white"
+                    type="button"
+                    onClick={() => generateResponse("Give me 3 10-30 word jokes")}
+                >
+                    Give me 3 short jokes
+                </button>
+            </div>
+        )
+    }
 
     return (
         <Layout.Main>
@@ -100,7 +142,7 @@ function Home() {
                         <MessageDisplay key={ix + "-key"} message={message} />
                     ))}
 
-                    {(currentLine || lines) && (
+                    {loading && (
                         <StreamDisplay lines={lines} currentLine={currentLine} />
                     )}
                 </div>
@@ -137,6 +179,7 @@ function Home() {
                             <span className="text-white/50">Streaming...</span>
                         )}
                     </button>
+                    <DebugPrompts />
                 </div>
             </Layout.RightColumn>
         </Layout.Main>
