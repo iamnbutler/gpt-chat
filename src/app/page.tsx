@@ -17,8 +17,14 @@ function Home() {
 
     const prompt = `${input} Use markdown to format your reply.`;
 
-    const generateResponse = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+            e.preventDefault();
+            generateResponse();
+        }
+    };
+
+    const generateResponse = async () => {
         setLines([]);
         setCurrentLine("");
         setLoading(true);
@@ -109,6 +115,7 @@ function Home() {
                         rows={10}
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
+                        onKeyDown={handleKeyDown}
                         autoFocus
                     />
                     <button
@@ -122,10 +129,10 @@ function Home() {
                             !loading && "hover:text-white"
                         )}
                         type="button"
-                        onClick={(e) => generateResponse(e)}
+                        onClick={() => generateResponse()}
                     >
                         {!loading ? (
-                            <><span>Submit</span> <span>&rarr;</span></>
+                            <><span>Submit</span><span className="opacity-70">⌘⏎</span></>
                         ) : (
                             <span className="text-white/50">Streaming...</span>
                         )}

@@ -37,8 +37,6 @@ export const useMessageStore = create<MessageStore>((set) => ({
         }));
     },
     resetMessages: () => {
-        set(produce((draft) => {
-            draft.messages = [];
-        }));
+        set({ messages: [] });
     },
 }));

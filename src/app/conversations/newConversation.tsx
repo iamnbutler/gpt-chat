@@ -18,7 +18,7 @@ function NewConversationButton() {
             messages: [],
             pinned: false,
             unread: false,
-            title: 'New Conversation',
+            title: 'Untitled Conversation',
             tags: []
         };
 
