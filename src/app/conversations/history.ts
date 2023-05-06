@@ -1,8 +1,12 @@
 import { create } from "zustand";
 import { Message } from "../chat/store";
+import { nanoid } from "nanoid";
+import { produce } from "immer";
+
 
 export interface Conversation {
-    date: string;
+    id: string;
+    date: Date;
     messages: Message[];
 }
 
@@ -15,8 +19,9 @@ export interface ConversationHistoryItem extends Conversation {
 
 const initialConversations: ConversationHistoryItem[] = [
     {
+        id: nanoid(),
         title: "Explaining theory of relativity",
-        date: "2022-05-01",
+        date: new Date("2021-08-01T12:00:00Z"),
         pinned: false,
         unread: false,
         tags: ["relativity", "science"],
@@ -40,8 +45,9 @@ const initialConversations: ConversationHistoryItem[] = [
         ],
     },
     {
+        id: nanoid(),
         title: "No Cloning Theorem and Simulation Theory",
-        date: "2022-05-02",
+        date: new Date("2022-05-02T12:00:00Z"),
         pinned: false,
         unread: true,
         tags: ["quantum physics", "simulation"],
@@ -64,19 +70,40 @@ const initialConversations: ConversationHistoryItem[] = [
     },
 ];
 
-
 type ConversationHistoryStore = {
-    history: ConversationHistoryItem[];
+    conversationHistory: ConversationHistoryItem[];
     addConversationHistoryItem: (item: ConversationHistoryItem) => void;
-    removeConversationHistoryItem: (index: number) => void;
+    removeConversationHistoryItem: (id: string) => void;
+    updateConversation: (id: string, conversation: Conversation) => void;
+    currentConversation: ConversationHistoryItem | null;
+    updateCurrentConversation: (conversation: ConversationHistoryItem) => void;
+    setCurrentConversation: (id: string) => void;
 };
 
 export const useConversationHistoryStore = create<ConversationHistoryStore>((set, get) => ({
-    history: initialConversations,
+    conversationHistory: initialConversations,
     addConversationHistoryItem: (item: ConversationHistoryItem) =>
-        set((state) => ({ history: [...state.history, item] })),
-    removeConversationHistoryItem: (index: number) =>
-        set((state) => ({
-            history: state.history.filter((_, i) => i !== index),
+        set(produce((state) => { state.conversationHistory.push(item); })),
+    removeConversationHistoryItem: (id: string) =>
+        set(produce((state) => {
+            state.conversationHistory = state.conversationHistory.filter((item: ConversationHistoryItem) => item.id !== id);
         })),
+    updateConversation: (id: string, conversation: Conversation) =>
+        set(produce((state) => {
+            const index = state.conversationHistory.findIndex((item: ConversationHistoryItem) => item.id === id);
+            if (index !== -1) {
+                state.conversationHistory[index] = { ...state.conversationHistory[index], ...conversation };
+            }
+        })),
+    currentConversation: null,
+    updateCurrentConversation: (conversation: ConversationHistoryItem) =>
+        set(produce((state) => { state.currentConversation = conversation; })),
+    setCurrentConversation: (id: string) => {
+        const conversation = get().conversationHistory.find((item) => item.id === id);
+        if (conversation) {
+            set(produce((state) => { state.currentConversation = conversation; }));
+        } else {
+            console.error("Invalid id, cannot set current conversation.");
+        }
+    },
 }));

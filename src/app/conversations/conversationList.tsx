@@ -1,13 +1,13 @@
-import { cn } from "@/lib/utils";
-import ConversationLink from "./conversation";
+import ConversationLink from "./conversationHistoryItem";
 import { useConversationHistoryStore } from "./history";
+import NewConversationButton from "./newConversation";
 
 export default function ConversationList() {
-    const conversations = useConversationHistoryStore((state) => state.history);
+    const conversations = useConversationHistoryStore((state) => state.conversationHistory);
 
     return (
         <div className="divide-y divide-dashed divide-white/5">
-            <button className={cn('flex w-full', 'justify-between', 'py-2 px-4', 'text-white/70', 'hover:cursor-pointer  hover:text-white')}><span>New Conversation</span><span>+</span></button>
+            <NewConversationButton />
             {conversations.map((conversation, ix) => (
                 <ConversationLink key={`${conversation}-${ix}`} conversation={conversation} />
             ))}

@@ -4,7 +4,7 @@ import { useState } from "react";
 import Spinner from "@/ui/spinner";
 import { MessageDisplay } from "@/ui/message";
 import { StreamDisplay } from "@/ui/stream";
-import { useMessageStore } from "./chat/store";
+import { INITIAL_MESSAGE, useMessageStore } from "./chat/store";
 import * as Layout from "@/ui/layout";
 
 function Home() {
@@ -87,8 +87,9 @@ function Home() {
         <Layout.Main>
             <Layout.LeftColumn />
             <Layout.CenterColumn>
-                <div className="max-w-3xl mx-auto flex flex-col grow-0 text-primary divide divide-y-white/10 relative">
+                <div className="max-w-2xl mx-auto flex flex-col grow-0 text-primary divide divide-y-white/10 relative">
                     {loading && <Spinner />}
+                    <MessageDisplay message={INITIAL_MESSAGE} />
                     {messages.map((message, ix) => (
                         <MessageDisplay key={ix + "-key"} message={message} />
                     ))}
