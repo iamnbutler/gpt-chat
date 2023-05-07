@@ -1,7 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { Conversation, useConversationStore } from "@stores/conversation";
-import { formatDistanceToNow } from "date-fns";
 import { useCallback } from "react";
 
 export default function ConversationLink({
@@ -12,11 +11,6 @@ export default function ConversationLink({
   const { currentConversation, setCurrentConversation } = useConversationStore(
     (state) => state
   );
-
-  const relativeTime = formatDistanceToNow(new Date(conversation.date), {
-    addSuffix: true,
-  });
-  const date = conversation.date.toLocaleDateString();
 
   const current = currentConversation?.id === conversation.id;
 
@@ -45,7 +39,6 @@ export default function ConversationLink({
       )}
     >
       <h3 className={cn("text-white")}>{conversation.title}</h3>
-      <time dateTime={date}>{relativeTime}</time>
     </div>
   );
 }

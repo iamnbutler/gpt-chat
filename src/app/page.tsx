@@ -145,7 +145,7 @@ Use markdown to format your reply, unless I specifed otherwise above.`;
           ))}
 
           {loading && <StreamDisplay lines={lines} currentLine={currentLine} />}
-          <section className="bg-red-500/10 border border-red-500/50 p-2 prose prose-sm">
+          <section className="bg-red-500/10 border border-red-500/50 p-2 space-y-4">
             <pre>
               <code>{JSON.stringify(lines, null, 2)}</code>
             </pre>
