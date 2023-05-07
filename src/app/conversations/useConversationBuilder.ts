@@ -1,44 +1,46 @@
-import { useState, useEffect } from 'react';
-import { Conversation } from './history';
+import { useState, useEffect } from "react";
+import { Conversation } from "./history";
 
 const fetchAndDecode = async (prompt: string): Promise<string> => {
-    const response = await fetch("/chat/generate", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ prompt }),
-    });
+  const response = await fetch("/chat/generate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ prompt }),
+  });
 
-    if (!response.ok) {
-        throw new Error(response.statusText);
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+
+  const data = response.body;
+  if (!data) {
+    throw new Error("No data in response");
+  }
+
+  const reader = data.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+
+    if (done) {
+      break;
     }
 
-    const data = response.body;
-    if (!data) {
-        throw new Error("No data in response");
-    }
+    buffer += decoder.decode(value, { stream: true });
+  }
 
-    const reader = data.getReader();
-    const decoder = new TextDecoder();
-    let buffer = "";
-
-    while (true) {
-        const { done, value } = await reader.read();
-
-        if (done) {
-            break;
-        }
-
-        buffer += decoder.decode(value, { stream: true });
-    }
-
-    return buffer;
+  return buffer;
 };
 
 const generateTitle = async (conversation: Conversation): Promise<string> => {
-    const messageText = conversation.messages.map((message) => message.messages.join(" ")).join(" ");
-    const prompt = `Generate a title for this conversation:
+  const messageText = conversation.messages
+    .map((message) => message.messages.join(" "))
+    .join(" ");
+  const prompt = `Generate a title for this conversation:
 \n\n
 ${messageText}
 \n\n
@@ -46,15 +48,17 @@ The title should be between 3 and 10 words long.
 \n\n
 Title:`;
 
-    const buffer = await fetchAndDecode(prompt);
-    const title = buffer.split("\n")[0].trim();
+  const buffer = await fetchAndDecode(prompt);
+  const title = buffer.split("\n")[0].trim();
 
-    return title;
+  return title;
 };
 
 const generateTags = async (conversation: Conversation): Promise<string[]> => {
-    const messageText = conversation.messages.map((message) => message.messages.join(" ")).join(" ");
-    const prompt = `Generate an array of tags based off of this conversation:
+  const messageText = conversation.messages
+    .map((message) => message.messages.join(" "))
+    .join(" ");
+  const prompt = `Generate an array of tags based off of this conversation:
 
 ${messageText}
 
@@ -82,33 +86,37 @@ Return only the tags, in this format:
 
 Tags:`;
 
-    const buffer = await fetchAndDecode(prompt);
-    const tags = buffer.trim().slice(1, -1).split(', ').map(tag => tag.slice(1, -1));
+  const buffer = await fetchAndDecode(prompt);
+  const tags = buffer
+    .trim()
+    .slice(1, -1)
+    .split(", ")
+    .map((tag) => tag.slice(1, -1));
 
-    return tags;
+  return tags;
 };
 
 export function useConversationBuilder(conversation: Conversation) {
-    const [title, setTitle] = useState("");
-    const [tags, setTags] = useState<string[]>([]);
-    const [loading, setLoading] = useState(true);
+  const [title, setTitle] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const generatedTitle = await generateTitle(conversation);
-            const generatedTags = await generateTags(conversation);
+  useEffect(() => {
+    const fetchData = async () => {
+      const generatedTitle = await generateTitle(conversation);
+      const generatedTags = await generateTags(conversation);
 
-            setTitle(generatedTitle);
-            setTags(generatedTags);
-            setLoading(false);
-        };
-
-        fetchData();
-    }, [conversation]);
-
-    return {
-        title,
-        tags,
-        loading,
+      setTitle(generatedTitle);
+      setTags(generatedTags);
+      setLoading(false);
     };
+
+    fetchData();
+  }, [conversation]);
+
+  return {
+    title,
+    tags,
+    loading,
+  };
 }

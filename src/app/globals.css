@@ -84,7 +84,7 @@
   }
 
   #keep-scroll-at-bottom-anchor {
-      overflow-anchor: auto;
-      height: 1px;
+    overflow-anchor: auto;
+    height: 1px;
   }
 }
