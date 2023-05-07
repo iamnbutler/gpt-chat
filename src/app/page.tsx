@@ -103,31 +103,32 @@ Use markdown to format your reply, unless I specifed otherwise above.`;
 
   function DebugPrompts() {
     return (
-      <div className="flex flex-col mt-12 space-y-2 items-start h-full">
+      <div className="flex-shrink pt-4 mt-4 border-slate-100/20 border-t items-start">
         <h3>Debug Prompts</h3>
         <button
-          className="text-white/70 hover:text-white"
+          className="text-slate-100/70 hover:text-slate-100"
           type="button"
           onClick={() => generateResponse("Generate a markdown testing file")}
         >
           Test Markdown
         </button>
+
         <button
-          className="text-white/70 hover:text-white"
+          className="text-slate-100/70 hover:text-slate-100"
           type="button"
           onClick={() => generateResponse("Tell me a 5 paragraph story")}
         >
           Tell me a 5 paragraph story
         </button>
         <button
-          className="text-white/70 hover:text-white"
+          className="text-slate-100/70 hover:text-slate-100"
           type="button"
           onClick={() => generateResponse("What is the simulation theory?")}
         >
           What is the simulation theory?
         </button>
         <button
-          className="text-white/70 hover:text-white"
+          className="text-slate-100/70 hover:text-slate-100"
           type="button"
           onClick={() => generateResponse("Give me 3 10-30 word jokes")}
         >
@@ -138,38 +139,36 @@ Use markdown to format your reply, unless I specifed otherwise above.`;
   }
 
   return (
-    <div className="flex h-screen flex-col flex-1 overflow-hidden">
-      <div className="mx-auto flex w-screen h-full items-start divide-x divide-white/10">
-        <aside className="w-[280px] shrink-0 h-full overflow-scroll-y border-r border-white/10 p-4">
-          <ConversationList />
-        </aside>
-        <main className="flex flex-col flex-grow min-h-full" id="chat-scroll-container">
-          <header className="top-0 sticky h-10 border-b border-white/10 px-4 flex justify-between items-center">
-            <div>
-              <h2>{currentConversation.title}</h2>
-            </div>
-            <div>
-              <p className="text-white/70">{currentConversation.messages.length} Messages</p>
-            </div>
-            {loading && <Spinner />}
-          </header>
+    <div className="h-screen w-screen app-grid gap-px bg-slate-700 overflow-hidden">
+      <aside className="bg-slate-900 shrink-0 grid-sidebar h-full overflow-scroll-y p-4">
+        <ConversationList />
+      </aside>
+      <main className="bg-slate-900 grid-chat flex flex-col overflow-y-scroll" id="chat-scroll-container">
+        <header className="top-0 sticky bg-slate-900/90 p-4 h-10 border-b border-slate-100/10 flex justify-between items-center">
+          <div>
+            <h2>{currentConversation.title}</h2>
+          </div>
+          <div>
+            <p className="text-slate-100/70">{currentConversation.messages.length}M</p>
+          </div>
+          {loading && <Spinner />}
+        </header>
 
+        <div className="p-4">
+          <div className="flex flex-col text-slate-100" >
 
-          <div className="p-4">
-            <div className="w-[560px] mx-auto flex flex-col grow-0 text-primary divide divide-y-white/10">
+            {!loading && currentConversation.messages.length === 0 && (
+              <Message message={INITIAL_CHAT_MESSAGE} />
+            )}
 
-              {!loading && currentConversation.messages.length === 0 && (
-                <Message message={INITIAL_CHAT_MESSAGE} />
-              )}
+            {messages?.map((message, ix) => (
+              <Message key={ix + "-key"} message={message} />
+            ))}
 
-              {messages?.map((message, ix) => (
-                <Message key={ix + "-key"} message={message} />
-              ))}
-
-              {loading && (
-                <StreamDisplay lines={lines} currentLine={currentLine} />
-              )}
-              {/* <section className="bg-red-500/10 border border-red-500/50 p-2 space-y-4">
+            {loading && (
+              <StreamDisplay lines={lines} currentLine={currentLine} />
+            )}
+            {/* <section className="bg-red-500/10 border border-red-500/50 p-2 space-y-4">
               <pre>
                 <code>{JSON.stringify(lines, null, 2)}</code>
               </pre>
@@ -177,50 +176,48 @@ Use markdown to format your reply, unless I specifed otherwise above.`;
                 <code>{JSON.stringify(currentLine, null, 2)}</code>
               </pre>
             </section> */}
-            </div>
-            <div id="keep-scroll-at-bottom-anchor" />
           </div>
-        </main>
-        <aside className="flex flex-col flex-grow justify-between overflow-y-scroll h-full p-4">
-          <div className="flex flex-col space-y-2">
-            <textarea
-              className={cn(
-                "flex flex-grow w-full rounded-xs border border-white/20 bg-transparent px-4 py-3 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              )}
-              placeholder="Send a message"
-              rows={10}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              autoFocus
-            />
-            <button
-              disabled={loading}
-              className={cn(
-                "text-white/70",
-                "flex justify-between",
-                "border border-white/20",
-                "py-2 px-4",
-                loading && "cursor-not-allowed",
-                !loading && "hover:text-white"
-              )}
-              type="button"
-              onClick={() => generateResponse(input)}
-            >
-              {!loading ? (
-                <>
-                  <span>Submit</span>
-                  <span className="opacity-70">⌘⏎</span>
-                </>
-              ) : (
-                <span className="text-white/50">Streaming...</span>
-              )}
-            </button>
-          </div>
-          <DebugPrompts />
-        </aside>
-      </div>
-      <Footer />
+          <div id="keep-scroll-at-bottom-anchor" />
+        </div>
+      </main>
+      <aside className="bg-slate-900 grid-composer flex flex-col flex-grow justify-between h-full p-4">
+        <div className="flex flex-col flex-grow h-full space-y-2">
+          <textarea
+            className={cn(
+              "flex flex-grow w-full rounded-xs border border-slate-100/20 bg-transparent px-4 py-3 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-100/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            )}
+            placeholder="Send a message"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            autoFocus
+          />
+          <button
+            disabled={loading}
+            className={cn(
+              "text-slate-100/70",
+              "flex justify-between",
+              "border border-slate-100/20",
+              "py-2 px-4",
+              loading && "cursor-not-allowed",
+              !loading && "hover:text-slate-100"
+            )}
+            type="button"
+            onClick={() => generateResponse(input)}
+          >
+            {!loading ? (
+              <>
+                <span>Submit</span>
+                <span className="opacity-70">⌘⏎</span>
+              </>
+            ) : (
+              <span className="text-slate-100/50">Streaming...</span>
+            )}
+          </button>
+        </div>
+        <DebugPrompts />
+      </aside>
+      <Footer className="grid-footer bg-slate-900	shrink-0" />
     </div>
   );
 }

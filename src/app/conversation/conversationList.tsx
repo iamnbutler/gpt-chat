@@ -8,7 +8,7 @@ export default function ConversationList() {
   const conversations = useConversationStore((state) => state.conversations);
 
   return (
-    <div className="divide-y divide-dashed divide-white/10">
+    <div className="divide-y divide-dashed divide-slate-100/10">
       <NewConversationButton />
       {conversations.map((conversation, ix) => (
         <ConversationLink

@@ -30,8 +30,8 @@ function NewConversationButton() {
         "flex w-full",
         "justify-between",
         "py-2 px-4",
-        "text-white/70",
-        "hover:cursor-pointer  hover:text-white"
+        "text-slate-100/70",
+        "hover:cursor-pointer  hover:text-slate-100"
       )}
       onClick={handleNewConversation}
     >

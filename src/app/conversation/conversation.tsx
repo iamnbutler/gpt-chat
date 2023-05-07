@@ -38,11 +38,11 @@ export default function ConversationLink({
           current
             ? "bg-amber-500/10 border-amber-500/20"
             : "border-transparent bg-transparent",
-          "text-white/70",
+          "text-slate-100/70",
           "hover:cursor-pointer"
         )}
       >
-        <h3 className={cn("text-white")}>{conversation.title}</h3>
+        <h3 className={cn("text-slate-100")}>{conversation.title}</h3>
       </div>
     </div>
   );

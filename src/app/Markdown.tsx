@@ -6,25 +6,25 @@ import { cn } from "@/lib/utils";
 type HeadingProps = React.ComponentProps<"h1">;
 
 const H1 = ({ children, ...props }: HeadingProps) => (
-  <h1 className={cn("text-3xl font-bold mb-2")} {...props}>
+  <h1 className={cn("text-3xl text-slate-100 font-bold mb-2")} {...props}>
     {children}
   </h1>
 );
 
 const H2 = ({ children, ...props }: HeadingProps) => (
-  <h2 className={cn("text-2xl font-bold mb-2")} {...props}>
+  <h2 className={cn("text-2xl text-slate-100 font-bold mb-2")} {...props}>
     {children}
   </h2>
 );
 
 const H3 = ({ children, ...props }: HeadingProps) => (
-  <h3 className={cn("text-lg font-bold mb-2")} {...props}>
+  <h3 className={cn("text-lg text-slate-100 font-bold mb-2")} {...props}>
     {children}
   </h3>
 );
 
 const H4 = ({ children, ...props }: HeadingProps) => (
-  <h4 className={cn("text-md font-bold mb-2")} {...props}>
+  <h4 className={cn("text-md text-slate-100 font-bold mb-2")} {...props}>
     {children}
   </h4>
 );
@@ -32,7 +32,7 @@ const H4 = ({ children, ...props }: HeadingProps) => (
 type InlineCodeProps = React.ComponentProps<"code">;
 
 const InlineCode = ({ children, ...props }: InlineCodeProps) => (
-  <code className="bg-white/5 p-1 -mx-1" {...props}>
+  <code className="bg-slate-950/5 p-1 -mx-1" {...props}>
     {children}
   </code>
 );
@@ -41,7 +41,7 @@ type LinkProps = React.ComponentProps<"a">;
 
 const Link = ({ children, ...props }: LinkProps) => (
   <a
-    className="underline-offset-4 decoration-white/40 decoration-dotted hover:decoration-solid hover:decoration-white"
+    className="underline-offset-4 decoration-slate-100/40 decoration-dotted hover:decoration-solid hover:decoration-slate-100"
     {...props}
   >
     {children}
@@ -51,8 +51,8 @@ const Link = ({ children, ...props }: LinkProps) => (
 type CodeBlockProps = React.ComponentProps<"pre">;
 
 const CodeBlock = ({ children, ...props }: CodeBlockProps) => (
-  <pre className="bg-white/5 border border-white/10 p-1 -mx-1 my-1" {...props}>
-    <code className="text-white">{children}</code>
+  <pre className="bg-slate-950/5 border border-slate-950/10 p-1 -mx-1 my-1" {...props}>
+    <code className="text-slate-100">{children}</code>
   </pre>
 );
 

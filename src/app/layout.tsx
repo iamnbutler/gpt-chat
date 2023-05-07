@@ -9,7 +9,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="dark font-mono text-sm overscroll-none">{children}</body>
+      <body className="font-mono text-sm text-slate-100 overscroll-none">{children}</body>
     </html>
   );
 }
