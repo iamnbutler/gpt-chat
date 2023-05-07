@@ -1,4 +1,4 @@
-import ConversationList from "@/app/conversations/conversationList";
+import ConversationList from "@app/conversation/conversationList";
 
 function LeftColumn() {
   return (

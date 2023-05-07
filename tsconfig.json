@@ -20,6 +20,11 @@
       }
     ],
     "paths": {
+      "@app/*": ["./src/app/*"],
+      "@stores/*": ["./src/stores/*"],
+      "@data/*": ["./src/data/*"],
+      "@lib/*": ["./src/lib/*"],
+      "@ui/*": ["./src/ui/*"],
       "@/*": ["./src/*"]
     }
   },

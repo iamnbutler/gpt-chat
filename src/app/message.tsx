@@ -1,17 +1,9 @@
-import { Message } from "@/app/chat/store";
 import { cn } from "@/lib/utils";
 import React from "react";
-import Markdown from "@/app/message/Markdown";
+import { ChatMessage } from "@stores/message";
+import Markdown from "@app/Markdown";
 
-interface MessageDisplayProps {
-  message: Message;
-}
-
-interface MessageDisplayProps {
-  message: Message;
-}
-
-const MessageDisplayComponent = ({ message }: MessageDisplayProps) => {
+const MessageComponent = ({ message }: { message: ChatMessage }) => {
   const isUserMessage = message.role === "user";
 
   return (
@@ -29,6 +21,6 @@ const MessageDisplayComponent = ({ message }: MessageDisplayProps) => {
   );
 };
 
-MessageDisplayComponent.displayName = "MessageDisplay";
+MessageComponent.displayName = "Message";
 
-export const MessageDisplay = React.memo(MessageDisplayComponent);
+export const Message = React.memo(MessageComponent);

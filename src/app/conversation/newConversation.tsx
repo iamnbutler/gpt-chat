@@ -1,16 +1,12 @@
 import React from "react";
 import { nanoid } from "nanoid";
-import {
-  ConversationHistoryItem,
-  useConversationHistoryStore,
-} from "./history";
-import { useMessageStore } from "../chat/store";
 import { cn } from "@/lib/utils";
+import { Conversation, useConversationStore } from "@stores/conversation";
+import { useMessageStore } from "@stores/message";
 
 function NewConversationButton() {
   const { resetMessages } = useMessageStore();
-  const { addConversationHistoryItem, setCurrentConversation } =
-    useConversationHistoryStore();
+  const { addConversation, setCurrentConversation } = useConversationStore();
 
   const handleNewConversation = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -18,18 +14,15 @@ function NewConversationButton() {
     e.preventDefault();
     resetMessages();
 
-    const conversationHistoryItem: ConversationHistoryItem = {
+    const conversation: Conversation = {
       id: nanoid(),
       date: new Date(),
       messages: [],
-      pinned: false,
-      unread: false,
       title: "Untitled Conversation",
-      tags: [],
     };
 
-    addConversationHistoryItem(conversationHistoryItem);
-    setCurrentConversation(conversationHistoryItem.id);
+    addConversation(conversation);
+    setCurrentConversation(conversation.id);
   };
 
   return (

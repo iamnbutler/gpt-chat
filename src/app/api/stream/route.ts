@@ -11,6 +11,8 @@ export async function POST(req: Request): Promise<Response> {
     prompt?: string;
   };
 
+  console.log("(stream) prompt:", prompt);
+
   if (!prompt) {
     return new Response("No prompt in the request", { status: 400 });
   }

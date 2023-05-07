@@ -2,42 +2,41 @@
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import Spinner from "@/ui/spinner";
-import { MessageDisplay } from "@/ui/message";
 import { StreamDisplay } from "@/ui/stream";
-import { INITIAL_MESSAGE, useMessageStore } from "./chat/store";
 import * as Layout from "@/ui/layout";
+import { INITIAL_CHAT_MESSAGE } from "@data/initial_chat_message";
+import { useMessageStore } from "@stores/message";
+import { Message } from "@app/message";
 
-function Home() {
+function Main() {
   const [loading, setLoading] = useState(false);
   const [input, setInput] = useState("");
   const [lines, setLines] = useState<string[]>([]);
-  const [streamedLines, setStreamedLines] = useState<string[]>([]);
   const [currentLine, setCurrentLine] = useState<string>("");
-
   const messages = useMessageStore((state) => state.messages);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
       e.preventDefault();
-      generateResponse();
+      generateResponse(input);
     }
   };
 
-  const generateResponse = async (debug_prompt?: string) => {
+  const generateResponse = async (input: string) => {
     setLines([]);
     setCurrentLine("");
     setLoading(true);
 
-    const message_input = debug_prompt ? debug_prompt : input;
-
     useMessageStore.getState().addMessage({
       role: "user",
-      messages: [message_input],
+      messages: [input],
     });
 
-    const prompt = `${message_input} Use markdown to format your reply.`;
+    const prompt = `${input}
 
-    const response = await fetch("/chat/generate", {
+Use markdown to format your reply, unless I specifed otherwise above.`;
+
+    const response = await fetch("/api/stream", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -46,6 +45,8 @@ function Home() {
         prompt,
       }),
     });
+
+    console.log(JSON.stringify(response.type, null, 2));
 
     if (!response.ok) {
       throw new Error(response.statusText);
@@ -60,7 +61,7 @@ function Home() {
     const reader = data.getReader();
     const decoder = new TextDecoder();
     let buffer = "";
-    let streamedLines = [];
+    let streamedLines: string[] = [];
 
     while (true) {
       const { done, value } = await reader.read();
@@ -87,12 +88,13 @@ function Home() {
     }
 
     setCurrentLine(""); // Clear the currentLine after parsing the last line
-    setLoading(false);
 
     useMessageStore.getState().addMessage({
       role: "assistant",
       messages: streamedLines,
     });
+
+    setLoading(false);
   };
 
   function DebugPrompts() {
@@ -137,12 +139,20 @@ function Home() {
       <Layout.CenterColumn>
         <div className="max-w-2xl mx-auto flex flex-col grow-0 text-primary divide divide-y-white/10 relative">
           {loading && <Spinner />}
-          <MessageDisplay message={INITIAL_MESSAGE} />
+          <Message message={INITIAL_CHAT_MESSAGE} />
           {messages.map((message, ix) => (
-            <MessageDisplay key={ix + "-key"} message={message} />
+            <Message key={ix + "-key"} message={message} />
           ))}
 
           {loading && <StreamDisplay lines={lines} currentLine={currentLine} />}
+          <section className="bg-red-500/10 border border-red-500/50 p-2 prose prose-sm">
+            <pre>
+              <code>{JSON.stringify(lines, null, 2)}</code>
+            </pre>
+            <pre>
+              <code>{JSON.stringify(currentLine, null, 2)}</code>
+            </pre>
+          </section>
         </div>
       </Layout.CenterColumn>
       <Layout.RightColumn>
@@ -169,7 +179,7 @@ function Home() {
               !loading && "hover:text-white"
             )}
             type="button"
-            onClick={() => generateResponse()}
+            onClick={() => generateResponse(input)}
           >
             {!loading ? (
               <>
@@ -187,4 +197,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Main;

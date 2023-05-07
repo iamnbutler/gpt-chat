@@ -1,3 +1,5 @@
+"use client";
+
 import * as Layout from "@/ui/layout";
 import "./globals.css";
 
