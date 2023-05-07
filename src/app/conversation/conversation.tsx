@@ -34,8 +34,10 @@ export default function ConversationLink({
           "flex flex-col",
           "space-y-1",
           "py-2 px-4",
-          'border',
-          current ? "bg-amber-500/10 border-amber-500/20" : "border-transparent bg-transparent",
+          "border",
+          current
+            ? "bg-amber-500/10 border-amber-500/20"
+            : "border-transparent bg-transparent",
           "text-white/70",
           "hover:cursor-pointer"
         )}

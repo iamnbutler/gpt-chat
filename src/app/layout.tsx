@@ -1,6 +1,5 @@
 "use client";
 
-import * as Layout from "@/ui/layout";
 import "./globals.css";
 
 export default function RootLayout({
@@ -8,5 +7,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <Layout.Base>{children}</Layout.Base>;
+  return (
+    <html lang="en">
+      <body className="dark font-mono text-sm overscroll-none">{children}</body>
+    </html>
+  );
 }

@@ -1,15 +1,20 @@
 import { create } from "zustand";
 import { produce } from "immer";
-import { ChatMessage, useMessageStore } from "@stores/message";
 import { generateTitle } from "@app/conversation/generateTitle";
 import { nanoid } from "nanoid";
-import { persist, createJSONStorage } from "zustand/middleware";
 
 export interface Conversation {
   id: string;
   date: Date;
   messages: ChatMessage[];
   title: string;
+}
+
+export type MessageAuthor = "user" | "assistant";
+
+export interface ChatMessage {
+  role: MessageAuthor;
+  messages: string[];
 }
 
 type ConversationStore = {
@@ -22,6 +27,10 @@ type ConversationStore = {
   setCurrentConversation: (id: string) => void;
   updateCurrentConversation: (conversation: Conversation) => void;
   generateConversationTitle: (conversation: Conversation) => Promise<void>;
+  messages: () => ChatMessage[] | undefined;
+  addMessage: (message: ChatMessage) => void;
+  setMessages: (messages: ChatMessage[]) => void;
+  resetMessages: () => void;
 };
 
 const BLANK_CONVERSATION: Conversation = {
@@ -80,10 +89,8 @@ export const useConversationStore = create<ConversationStore>((set, get) => ({
     const conversations = get().conversations;
     const conversation = conversations.find((item) => item.id === id);
     if (conversation) {
-      const { resetMessages, setMessages } = useMessageStore.getState();
-      resetMessages();
       set({ currentConversation: conversation });
-      setMessages(conversation.messages);
+      get().setMessages(conversation.messages);
     } else {
       console.error("Invalid id, cannot set current conversation.");
     }
@@ -104,6 +111,31 @@ export const useConversationStore = create<ConversationStore>((set, get) => ({
         if (index !== -1) {
           state.conversations[index] = updatedConversation;
         }
+      })
+    );
+  },
+  messages: () => {
+    const currentConversation = get().currentConversation;
+    return currentConversation ? currentConversation.messages : undefined;
+  },
+  addMessage: (message: ChatMessage) => {
+    set(
+      produce((state) => {
+        state.currentConversation.messages.push(message);
+      })
+    );
+  },
+  setMessages: (messages: ChatMessage[]) => {
+    set(
+      produce((state) => {
+        state.currentConversation.messages = messages;
+      })
+    );
+  },
+  resetMessages: () => {
+    set(
+      produce((state) => {
+        state.currentConversation.messages = [];
       })
     );
   },

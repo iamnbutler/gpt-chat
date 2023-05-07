@@ -2,10 +2,9 @@ import React from "react";
 import { nanoid } from "nanoid";
 import { cn } from "@/lib/utils";
 import { Conversation, useConversationStore } from "@stores/conversation";
-import { useMessageStore } from "@stores/message";
 
 function NewConversationButton() {
-  const { resetMessages } = useMessageStore();
+  const { resetMessages } = useConversationStore();
   const { addConversation, setCurrentConversation } = useConversationStore();
 
   const handleNewConversation = (

@@ -9,7 +9,7 @@ const LinkButton = ({ href, children }: React.ComponentProps<"a">) => (
       "text-sm font-medium",
       "rounded-xs",
       "border border-transparent hover:border-white/10",
-      "py-2 px-4",
+      "py-1 px-2",
       "flex items-center gap-x-2"
     )}
   >
@@ -17,10 +17,10 @@ const LinkButton = ({ href, children }: React.ComponentProps<"a">) => (
   </a>
 );
 
-function Header() {
+function Footer() {
   return (
-    <header className="shrink-0 border-b border-white/10">
-      <div className="mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+    <header className="shrink-0 border-t border-white/10">
+      <div className="mx-auto flex h-10 items-center justify-between px-4 sm:px-6 lg:px-8">
         <h1>GPT Chat</h1>
         <menu className="flex items-center gap-x-8" role="navigation">
           <LinkButton href="https://github.com/iamnbutler/gpt-chat/issues">
@@ -32,4 +32,4 @@ function Header() {
   );
 }
 
-export default Header;
+export default Footer;
